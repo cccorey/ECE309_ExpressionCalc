@@ -77,28 +77,37 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 
 	@Override
 	public double calculate(String expression, String x) throws Exception {
-		enteredExpression = expression;
-		String smallExpression;
-		expression = operandSubstitution(expression, x);
-		//while () { LOOP HERE FOR EACH PART
-			
-			if (expression.contains("(")) {
-				smallExpression = handleParenthesis(expression);
-			}
-			else
-			{
-				smallExpression = expression;
-			}
-			smallExpression = evaluateComplexExpression(expression);
-		//}
-			return Double.parseDouble(expression); //TEMP RETURN VALUE
+		//enteredExpression = expression;
+				String smallExpression = null;
+				expression = operandSubstitution(expression, x);
+				while (expression.contains("^") || expression.contains("r") ||expression.contains( "*") || expression.contains("/") || expression.contains("+") || expression.contains("-") ) { //LOOP HERE FOR EACH PART
+					// as long as there are still operations to be done, evaluate the expression
+					
+					if (expression.contains("(")) {
+						smallExpression = handleParenthesis(expression);
+					}
+					else
+					{
+						smallExpression = expression;
+					}
+					smallExpression = evaluateComplexExpression(expression);
+				}
+				
+				// if we're out of the loop, that means we have no more operations, so we're down to just 1 value
+					return Double.parseDouble(smallExpression); //TEMP RETURN VALUE
 		
 	}
 
 	private String handleParenthesis(String expression) throws Exception {
 		// TODO Find the innermost parenthesis set and returns its section of the
-		// expression
-		return null;
+				// expression
+				int leftParenIndex = expression.lastIndexOf("(");
+				int rightParenIndex = expression.indexOf(")");
+				
+				String smallExpression = expression.substring(leftParenIndex +1, rightParenIndex);
+				smallExpression = evaluateComplexExpression(smallExpression);		
+				
+				return smallExpression;
 	}
 
 	private String evaluateComplexExpression(String complexExpression) throws Exception {
