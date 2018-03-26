@@ -67,6 +67,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		errorTextField.setSelectedTextColor(Color.BLACK);
 
 		inputTextField.addKeyListener(this);
+		xTextField.addKeyListener(this);
 		recallButton.addActionListener(this);
 
 		calcFrame.setSize(500, 500);
@@ -76,6 +77,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 
 	@Override
 	public double calculate(String expression, String x) throws Exception {
+		System.out.println("Jonathan Reese, Rachel Corey White, Geoffery Balshaw");
 		enteredExpression = expression;
 		String smallExpression;
 		expression = operandSubstitution(expression, x);
@@ -223,6 +225,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 
 		if (expression.contains("x") && x.equals("")) // No valid x given
 			throw new IllegalArgumentException("No valid x value given");
+		else if (!x.equals("") && !expression.contains("x"))
+			throw new IllegalArgumentException("Expression does not contain x with x value specified");
 		else
 			expression = expression.replaceAll("x", x);
 
@@ -245,10 +249,18 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			try {
 				double answer = calculate(inputTextField.getText(), xTextField.getText());
-				outputTextArea.append(enteredExpression + " = " + answer + "\n");
+				outputTextArea.append(enteredExpression + " = " + answer);
+				if (inputTextField.getText().toLowerCase().contains("x"))
+				{
+					outputTextArea.append(" for x = " + xTextField.getText() +"\n");
+				}
+				else {
+					outputTextArea.append("\n");
+				}
 				outputTextArea.setCaretPosition(outputTextArea.getDocument().getLength());
 				inputTextField.setText("");
 				errorTextField.setText("");
+				xTextField.setText("");
 				errorTextField.setBackground(Color.WHITE);
 			} catch (Exception e1) {
 				errorTextField.setText(e1.toString());
@@ -263,6 +275,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		// TODO Auto-generated method stub
 		if (ae.getSource() == recallButton) {
 			inputTextField.setText(enteredExpression);
+			xTextField.setText(enteredX);
 			errorTextField.setText("");
 			errorTextField.setBackground(Color.WHITE);
 		}
