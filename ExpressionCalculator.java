@@ -126,7 +126,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				else if(complexExpression.contains("/")) { currentOperator = complexExpression.indexOf("/"); }
 				else if(complexExpression.contains("+")) { currentOperator = complexExpression.indexOf("+"); }
 				else if(complexExpression.contains("-")) { currentOperator = complexExpression.indexOf("-"); }
-				for(i = currentOperator-1; i == 0; i--) {
+				for(i = currentOperator-1; i >= 0; i--) {
 					if((complexExpression.charAt(i) == 'r') || (complexExpression.charAt(i) == '^') || (complexExpression.charAt(i) == '*') || (complexExpression.charAt(i) == '/') || (complexExpression.charAt(i) == '+') || (complexExpression.charAt(i) == '-')) {
 						beforeOperator = i;
 						break;
@@ -175,7 +175,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		
 		if((i == simpleExpression.length()) || (i == simpleExpression.length()-1)) {
 			System.out.println("Expression is not an operator surrounded by operands");
-			return null;
+			throw new IllegalArgumentException("Expression is not an operator surrounded by operands");
+			//return null;
 		}
 		
 		String leftOperand = simpleExpression.substring(0,i).trim();
@@ -185,13 +186,17 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		try { leftNumber = Double.parseDouble(leftOperand); }
 		catch(NumberFormatException nfe) { 
 			System.out.println("Left operand is not numeric.");
-			return null; }
+			throw new IllegalArgumentException("Left operand is not numeric.");
+			//return null; }
+		}
 
 		double rightNumber;
 		try { rightNumber = Double.parseDouble(rightOperand); }
 		catch(NumberFormatException nfe) { 
 			System.out.println("Right operand is not numeric.");
-			return null; }
+			throw new IllegalArgumentException("Right operand is not numeric.");
+			//return null; }
+		}
 		
 		double result = 0;
 		switch(operator) {
