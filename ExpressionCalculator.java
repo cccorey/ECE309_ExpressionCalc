@@ -120,14 +120,45 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		int currentOperator = ' ';
 		int i;
 		
+		private String evaluateComplexExpression(String complexExpression) throws Exception {
+		// TODO Handle complex expressions, calling evaluateSimpleExpression when 2 are left
+		System.out.println("Entering complex eval");
+		String simpleExpress = " ";
+		String simpleExpressVal = " ";
+		int beforeOperator = ' ';
+		int afterOperator = ' ';
+		int currentOperator = ' ';
+		int i;
+		
+		
 		while(complexExpression.contains("r") || complexExpression.contains("^") || complexExpression.contains("*") || complexExpression.contains("/") || complexExpression.contains("+") || complexExpression.contains("-")) {
 		
-				if(complexExpression.contains("r")) { currentOperator = complexExpression.indexOf("r"); }
+				if(complexExpression.contains("r") && complexExpression.contains("^")) { 
+					if(complexExpression.indexOf("r") < complexExpression.indexOf("^")) { currentOperator = complexExpression.indexOf("r"); }
+					else { currentOperator = complexExpression.indexOf("^"); }
+				}
+				
+				else if(complexExpression.contains("r")) { currentOperator = complexExpression.indexOf("r"); }
 				else if(complexExpression.contains("^")) { currentOperator = complexExpression.indexOf("^"); }
+				
+				else if(complexExpression.contains("*") && complexExpression.contains("/")) { 
+					if(complexExpression.indexOf("*") < complexExpression.indexOf("/")) { currentOperator = complexExpression.indexOf("*"); }
+					else { currentOperator = complexExpression.indexOf("/"); }
+				}
+				
 				else if(complexExpression.contains("*")) { currentOperator = complexExpression.indexOf("*"); }
 				else if(complexExpression.contains("/")) { currentOperator = complexExpression.indexOf("/"); }
+				
+				else if(complexExpression.contains("+") && complexExpression.contains("-")) { 
+					if(complexExpression.indexOf("+") < complexExpression.indexOf("-")) { currentOperator = complexExpression.indexOf("+"); }
+					else { currentOperator = complexExpression.indexOf("-"); }
+				}
+				
 				else if(complexExpression.contains("+")) { currentOperator = complexExpression.indexOf("+"); }
 				else if(complexExpression.contains("-")) { currentOperator = complexExpression.indexOf("-"); }
+				
+				System.out.println(currentOperator);
+				
 				for(i = currentOperator-1; i >= 0; i--) {
 					if((complexExpression.charAt(i) == 'r') || (complexExpression.charAt(i) == '^') || (complexExpression.charAt(i) == '*') || (complexExpression.charAt(i) == '/') || (complexExpression.charAt(i) == '+') || (complexExpression.charAt(i) == '-')) {
 						beforeOperator = i;
@@ -135,6 +166,9 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 					}
 					else { beforeOperator = -1; }
 				}
+				
+				System.out.println(beforeOperator);
+
 				for(i = currentOperator+1; i < complexExpression.length(); i++) {
 					if((complexExpression.charAt(i) == 'r') || (complexExpression.charAt(i) == '^') || (complexExpression.charAt(i) == '*') || (complexExpression.charAt(i) == '/') || (complexExpression.charAt(i) == '+') || (complexExpression.charAt(i) == '-')) {
 						afterOperator = i;
@@ -143,12 +177,14 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 					else { afterOperator = -1; }
 				}
 				
+				System.out.println(afterOperator);
+				
 				if ((beforeOperator == -1) && (afterOperator == -1)) { simpleExpress = complexExpression; }
 				else if (beforeOperator == -1) { simpleExpress = complexExpression.substring(0, afterOperator); }
 				else if (afterOperator == -1) { simpleExpress = complexExpression.substring(beforeOperator+1); }
 				else { simpleExpress = complexExpression.substring(beforeOperator+1, afterOperator); }
+
 				simpleExpressVal = evaluateSimpleExpression(simpleExpress);
-				
 				
 				complexExpression = complexExpression.replace(simpleExpress, simpleExpressVal);
 			}
