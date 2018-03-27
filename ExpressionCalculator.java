@@ -320,8 +320,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 	private String operandSubstitution(String expression, String x) throws Exception {
 		// TODO Folds to lowercase, replaces pi, e, and x in the expression
 			expression = expression.trim().toLowerCase();
-
-		if (expression.contains("x") && x.equals("")) // No valid x given
+			try { Double.parseDouble(x);} catch(Exception e) {throw new IllegalArgumentException("x is not parseable to a double"); }
+		if ( (expression.contains("x") && x.equals(""))) // No valid x given
 			throw new IllegalArgumentException("No valid x value given");
 		else if (!x.equals("") && !expression.contains("x"))
 			throw new IllegalArgumentException("Expression does not contain x with x value specified");
