@@ -77,21 +77,25 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 
 	@Override
 	public double calculate(String expression, String x) throws Exception {
-		System.out.println("Jonathan Reese, Rachel Corey White, Geoffery Balshaw");
+		System.out.println("Jonathan Reese, Rachel Corey White, Geoffrey Balshaw");
 		enteredExpression = expression;
-		String smallExpression;
+		String smallExpression = null;
 		expression = operandSubstitution(expression, x);
-		//while () { LOOP HERE FOR EACH PART
+	//	while (expression.contains("^") || expression.contains("r") ||expression.contains( "*") || expression.contains("/") || expression.contains("+") || expression.contains("-") ) { //LOOP HERE FOR EACH PART
+			// as long as there are still operations to be done, evaluate the expression
 			
 			if (expression.contains("(")) {
-				smallExpression = handleParenthesis(expression);
+				System.out.println("expression to be handled is " + expression);
+				expression = handleParenthesis(expression);
+				
 			}
 			else
 			{
 				smallExpression = expression;
 			}
-			smallExpression = evaluateComplexExpression(smallExpression); //WILL BE CHANGED TO COMPLEX
-		//}
+			smallExpression = evaluateComplexExpression(expression);
+			System.out.println(smallExpression);
+	//	}
 			return Double.parseDouble(smallExpression); //TEMP RETURN VALUE
 		
 	}
@@ -102,17 +106,68 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		//SHOULD RETURN AN ERROR IF NOT AN EQUAL # OF PARENTHESIS?
 		
 		System.out.println("Entering handleParenthesis");
-		int leftParenIndex = expression.lastIndexOf("(");
-		int rightParenIndex = expression.indexOf(")");
+		int leftParenIndex =0; // = expression.lastIndexOf("(");
+		int rightParenIndex =0; // = expression.indexOf(")");
+		int parenCount =0;				
 		
-		String smallExpression = expression.substring(leftParenIndex +1, rightParenIndex);
-		//smallExpression = evaluateComplexExpression(smallExpression);		
+		int i=0;		
+		int[] countarray = new int[expression.length()];
 		
-		return smallExpression;
+		for(i=0; i < expression.length(); i++) {
+			if(expression.charAt(i) == '(') parenCount++;
+			if(expression.charAt(i) == ')') parenCount--;
+			countarray[i] = parenCount;			
+		}
+		
+		if(countarray[expression.length() -1] !=0) {
+			System.out.println("Uneven left and right parenthesis.");
+			throw new IllegalArgumentException("Uneven left and right parenthesis.");
+		}
+		
+		int max = 0;
+		
+		for(i=0; i < countarray.length; i++) {
+			if (countarray[i] > max) max = countarray[i];
+		}
+			
+			
+		for (i=0; i < countarray.length; i++) {
+			if (countarray[i] == max) {
+				leftParenIndex = i;
+				break;
+			}
+		}
+
+		
+//		String afterParen = expression.substring(leftParenIndex+1);
+		rightParenIndex = expression.indexOf(')', leftParenIndex);
+		
+		String leftOfParen = expression.substring(0, leftParenIndex);
+		
+//		if(leftParenIndex != 0) {
+//			String leftOfParen = expression.substring(0, leftParenIndex-1);
+//		}
+//		else {
+//			String leftOfParen = null;
+//		}
+		
+		String rightOfParen = expression.substring(rightParenIndex+1);		
+		String innerExpression = expression.substring(leftParenIndex +1, rightParenIndex);
+		
+		String intermedExpression = evaluateComplexExpression(innerExpression);		
+		
+		String finalExpression = leftOfParen + intermedExpression + rightOfParen;
+		
+		System.out.println("finalExpression is " + finalExpression);
+		
+		if(finalExpression.contains("(")) finalExpression = handleParenthesis(finalExpression);
+		
+		return finalExpression;
 	}
 
 	private String evaluateComplexExpression(String complexExpression) throws Exception {
 		// TODO Handle complex expressions, calling evaluateSimpleExpression when 2 are left
+		System.out.println("Entering complex eval");
 		String simpleExpress = " ";
 		String simpleExpressVal = " ";
 		int beforeOperator = ' ';
@@ -120,14 +175,35 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		int currentOperator = ' ';
 		int i;
 		
+		System.out.println("complexExpression is " + complexExpression);
 		while(complexExpression.contains("r") || complexExpression.contains("^") || complexExpression.contains("*") || complexExpression.contains("/") || complexExpression.contains("+") || complexExpression.contains("-")) {
-		
-				if(complexExpression.contains("r")) { currentOperator = complexExpression.indexOf("r"); }
+					
+				if(complexExpression.contains("r") && complexExpression.contains("^")) { 
+					if(complexExpression.indexOf("r") < complexExpression.indexOf("^")) { currentOperator = complexExpression.indexOf("r"); }
+					else { currentOperator = complexExpression.indexOf("^"); }
+				}
+				
+				else if(complexExpression.contains("r")) { currentOperator = complexExpression.indexOf("r"); }
 				else if(complexExpression.contains("^")) { currentOperator = complexExpression.indexOf("^"); }
+				
+				else if(complexExpression.contains("*") && complexExpression.contains("/")) { 
+					if(complexExpression.indexOf("*") < complexExpression.indexOf("/")) { currentOperator = complexExpression.indexOf("*"); }
+					else { currentOperator = complexExpression.indexOf("/"); }
+				}
+				
 				else if(complexExpression.contains("*")) { currentOperator = complexExpression.indexOf("*"); }
 				else if(complexExpression.contains("/")) { currentOperator = complexExpression.indexOf("/"); }
+				
+				else if(complexExpression.contains("+") && complexExpression.contains("-")) { 
+					if(complexExpression.indexOf("+") < complexExpression.indexOf("-")) { currentOperator = complexExpression.indexOf("+"); }
+					else { currentOperator = complexExpression.indexOf("-"); }
+				}
+				
 				else if(complexExpression.contains("+")) { currentOperator = complexExpression.indexOf("+"); }
 				else if(complexExpression.contains("-")) { currentOperator = complexExpression.indexOf("-"); }
+				
+				System.out.println("index of currentOperator is " + currentOperator);
+				
 				for(i = currentOperator-1; i >= 0; i--) {
 					if((complexExpression.charAt(i) == 'r') || (complexExpression.charAt(i) == '^') || (complexExpression.charAt(i) == '*') || (complexExpression.charAt(i) == '/') || (complexExpression.charAt(i) == '+') || (complexExpression.charAt(i) == '-')) {
 						beforeOperator = i;
@@ -135,6 +211,9 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 					}
 					else { beforeOperator = -1; }
 				}
+				
+				System.out.println("index of beforeOperator is " + beforeOperator);
+
 				for(i = currentOperator+1; i < complexExpression.length(); i++) {
 					if((complexExpression.charAt(i) == 'r') || (complexExpression.charAt(i) == '^') || (complexExpression.charAt(i) == '*') || (complexExpression.charAt(i) == '/') || (complexExpression.charAt(i) == '+') || (complexExpression.charAt(i) == '-')) {
 						afterOperator = i;
@@ -143,13 +222,17 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 					else { afterOperator = -1; }
 				}
 				
+				System.out.println("index of afterOperator is " + afterOperator);
+				
 				if ((beforeOperator == -1) && (afterOperator == -1)) { simpleExpress = complexExpression; }
 				else if (beforeOperator == -1) { simpleExpress = complexExpression.substring(0, afterOperator); }
 				else if (afterOperator == -1) { simpleExpress = complexExpression.substring(beforeOperator+1); }
 				else { simpleExpress = complexExpression.substring(beforeOperator+1, afterOperator); }
+
+				System.out.println("simpleExpress is " + simpleExpress);
 				simpleExpressVal = evaluateSimpleExpression(simpleExpress);
 				
-				
+				System.out.println("simpleExpressVal is " + simpleExpressVal);
 				complexExpression = complexExpression.replace(simpleExpress, simpleExpressVal);
 			}
 		
@@ -160,7 +243,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 	private String evaluateSimpleExpression(String simpleExpression) throws Exception {
 		// TODO Handles 1 operator remaining
 		//simpleExpression = simpleExpression.replaceAll("u", "-");
-		
+		System.out.println("simpleExpression is " + simpleExpression);
 		char operator = ' ';
 		int i;
 		for(i = 1; i < simpleExpression.length(); i++) {
@@ -185,10 +268,11 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		String rightOperand = simpleExpression.substring(i+1).trim();
 		
 		double leftNumber;
-		try { leftNumber = Double.parseDouble(leftOperand); }
+		try { leftNumber = Double.parseDouble(leftOperand);
+				System.out.println("leftOperand is " + leftOperand);}
 		catch(NumberFormatException nfe) { 
-			System.out.println("Left operand is not numeric.");
-			throw new IllegalArgumentException("Left operand is not numeric.");
+			System.out.println("Left operand " + leftOperand + " is not numeric.");
+			throw new IllegalArgumentException("Left operand " + leftOperand + " is not numeric.");
 			//return null; }
 		}
 
@@ -238,8 +322,9 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 	}
 
 	public static void main(String args[]) {
-		System.out.println("Jonathan Reese, Rachel Corey White, Geoffery Balshaw");
+		System.out.println("Jonathan Reese, Rachel Corey White, Geoffrey Balshaw");
 		new ExpressionCalculator();
+		//handleParenthesis("(10+5+2-3)*54+69/(19+4)");
 	}
 
 	@Override
