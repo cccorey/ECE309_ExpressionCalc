@@ -94,6 +94,7 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				smallExpression = expression;
 			}
 			smallExpression = evaluateComplexExpression(expression);
+			smallExpression = smallExpression.replace('u', '-');
 			System.out.println(smallExpression);
 	//	}
 			return Double.parseDouble(smallExpression); //TEMP RETURN VALUE
@@ -175,9 +176,13 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 		int currentOperator = ' ';
 		int i;
 		
+		
+		
 		System.out.println("complexExpression is " + complexExpression);
 		while(complexExpression.contains("r") || complexExpression.contains("^") || complexExpression.contains("*") || complexExpression.contains("/") || complexExpression.contains("+") || complexExpression.contains("-")) {
 					
+			if(complexExpression.charAt(0) == '-') { complexExpression = 'u' + complexExpression.substring(1); }
+			
 				if(complexExpression.contains("r") && complexExpression.contains("^")) { 
 					if(complexExpression.indexOf("r") < complexExpression.indexOf("^")) { currentOperator = complexExpression.indexOf("r"); }
 					else { currentOperator = complexExpression.indexOf("^"); }
@@ -229,11 +234,20 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				else if (afterOperator == -1) { simpleExpress = complexExpression.substring(beforeOperator+1); }
 				else { simpleExpress = complexExpression.substring(beforeOperator+1, afterOperator); }
 
+				if(simpleExpress.charAt(0) == 'u') { simpleExpress = '-' + simpleExpress.substring(1); }
+				
 				System.out.println("simpleExpress is " + simpleExpress);
 				simpleExpressVal = evaluateSimpleExpression(simpleExpress);
 				
+				if(simpleExpress.charAt(0) == '-') { simpleExpress = 'u' + simpleExpress.substring(1); }
+				
 				System.out.println("simpleExpressVal is " + simpleExpressVal);
+				System.out.println("simpleExpress is " + simpleExpress);
+				System.out.println("Complex ex is" + complexExpression);
 				complexExpression = complexExpression.replace(simpleExpress, simpleExpressVal);
+				simpleExpressVal = simpleExpressVal.replace('-', 'u');
+				if(complexExpression.charAt(0) == '-') { complexExpression = 'u' + complexExpression.substring(1); }
+				System.out.println("Complex express at bottom of while is " + complexExpression);
 			}
 		
 	
