@@ -1,4 +1,3 @@
-
 //Geoffrey Balshaw, Rachel Corey White, Jonathan Reese
 
 import java.awt.Color;
@@ -390,6 +389,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				case '/':
 				case 'r':
 				case '^':
+				case '(':
+				case ')':
 					break;
 				default:
 					throw new IllegalArgumentException("x has no operator next to it");
@@ -403,6 +404,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				case '/':
 				case 'r':
 				case '^':
+				case '(':
+				case ')':
 					break;
 				default:
 					throw new IllegalArgumentException("x has no operator next to it");
@@ -427,6 +430,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				case '/':
 				case 'r':
 				case '^':
+				case '(':
+				case ')':
 					break;
 				default:
 					throw new IllegalArgumentException("e has no operator next to it");
@@ -440,6 +445,8 @@ public class ExpressionCalculator implements Calculator, KeyListener, ActionList
 				case '/':
 				case 'r':
 				case '^':
+				case '(':
+				case ')':
 					break;
 				default:
 					throw new IllegalArgumentException("e has no operator next to it");
